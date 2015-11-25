@@ -81,6 +81,7 @@ class SoapClient(object):
                  http_headers=None, trace=False,
                  username=None, password=None,
                  key_file=None, plugins=None,
+                 strict_wsdl=True
                  ):
         """
         :param http_headers: Additional HTTP Headers; example: {'Host': 'ipsec.example.com'}
@@ -94,6 +95,7 @@ class SoapClient(object):
         self.xml_request = self.xml_response = ''
         self.http_headers = http_headers or {}
         self.plugins = plugins or []
+        self.strict_wsdl = strict_wsdl
         # extract the base directory / url for wsdl relative imports:
         if wsdl and wsdl_basedir == '':
             # parse the wsdl url, strip the scheme and filename
@@ -263,7 +265,7 @@ class SoapClient(object):
             if detailXml and detailXml.children():
                 operation = self.get_operation(method)
                 fault = operation['faults'][detailXml.children()[0].get_name()]
-                detail = detailXml.children()[0].unmarshall(fault, strict=False)
+                detail = detailXml.children()[0].unmarshall(fault, strict=self.strict_wsdl)
 
             raise SoapFault(unicode(response.faultcode),
                             unicode(response.faultstring),
@@ -365,7 +367,7 @@ class SoapClient(object):
         # call remote procedure
         response = self.call(method, *params)
         # parse results:
-        resp = response('Body', ns=soap_uri).children().unmarshall(output)
+        resp = response('Body', ns=soap_uri).children().unmarshall(output, strict=False)
         return resp and list(resp.values())[0]  # pass Response tag children
 
     def wsdl_call_get_params(self, method, input, args, kwargs):
