@@ -86,7 +86,7 @@ else:
 #            httplib2.debuglevel=4 
             kwargs = {}
             if proxy:
-                import socks
+                import httplib2.socks as socks
                 kwargs['proxy_info'] = httplib2.ProxyInfo(proxy_type=socks.PROXY_TYPE_HTTP, **proxy)
                 log.info("using proxy %s" % proxy)
 
