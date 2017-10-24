@@ -176,8 +176,6 @@ else:
         def request(self, url, method, body, headers):
             c = pycurl.Curl()
             c.setopt(pycurl.URL, url)
-            log.info("Overriding user agent")
-            c.setopt(pycurl.USERAGENT, 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)')
             if 'proxy_host' in self.proxy:
                 c.setopt(pycurl.PROXY, self.proxy['proxy_host'])
             if 'proxy_port' in self.proxy:
